@@ -1,1 +1,2 @@
 # Estevan_mtec1201-fall2026
+Im trying to pass this class so I can continue what I want do do in my major with lighting and scenery but I hope to take the designs from this class for my future so I have a better understanding of what I can do later on.
