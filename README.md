@@ -1,1 +1,2 @@
 # Estevan_mtec1201-fall2026
+Im just trying to finish this class so I can go into my main tracks and get into focus on lighting and scenic I hope to learn as much as I can about designing here for future references.
