@@ -14,6 +14,13 @@ let dropActive = false;
 
 let snowActive = false;
 
+let starttime = 0;
+
+let waterlevel = 0;
+
+let iceshine = false;
+let shinetimer = 0;
+
 function preload() {
 treasure = loadImage('images/treasurechest.jpg');
 }
@@ -23,8 +30,8 @@ function setup() {
   textAlign(CENTER)
 }
 
+// Switches to different scenes
 function draw() {
-// Rain();
 if (Seasons == 1) {
   Sun();
 } else if (Seasons == 2) {
@@ -36,6 +43,7 @@ if (Seasons == 1) {
 } 
 }
 
+//The opening image of the experinces
 function Experiences(){
 background(238,75,100);
 fill(255)
@@ -61,8 +69,8 @@ fill(255)
 text("Return",500,480)
 }
 
+// The layout for the sun 
 function Sun() {
-
 background (119,196,254)
 strokeWeight(2)
 if (SunAlt == false) {
@@ -70,8 +78,9 @@ if (SunAlt == false) {
   circle(50,200,250)
 } 
 else if (SunAlt == true) {
+  background(220,70,100)
   fill(244,128,55);
-    circle(circleSunX,circleSunY,circleSunR*2);
+  circle(circleSunX,circleSunY,circleSunR*2);
 }
 fill(0,119,190,200)
 quad(0,500,0,200,600,200,600,300,)
@@ -83,13 +92,33 @@ SimpleBird(250,100,50)
 SimpleBird(300,150,30)
 SimpleBird(450,75,45)
 pop()
+push()
+strokeWeight(5)
+stroke(255,50,0)
+line(50,550,100,560)
+line(130,565,180,570)
+line(210,570,260,565)
+line(290,560,340,550)
+line(370,543,420,527)
+line(450,515,500,495)
+line(550,400,450,500)
+line(450,400,550,500)
+pop()
 if (chest == true){
   image(treasure,400,400,150,150)
 } else if (Seasons !== 1){
   chest = false
 }
+
+if (millis() - starttime < 5000){
+  textSize(15)
+  fill(255)
+  text("Click Sun to Change View",100,60)
 }
 
+}
+
+// The layout for the rain 
 function Rain() {
 background(132,145,157)
 stroke(1)
@@ -151,6 +180,16 @@ Waves(300,250,20)
 Waves(400,250,20)
 Waves(500,250,20)
 pop()
+push()
+noStroke()
+fill(130,130,130)
+circle(mouseX,50,30)
+circle(mouseX,70,30)
+circle(mouseX+20,50,30)
+circle(mouseX+20,70,30)
+circle(mouseX+40,50,30)
+circle(mouseX+40,70,30)
+pop()
 if (dropActive) {
   RainDrop(dropX, dropY, dropW, dropH);
   RainDrop(dropX+30, dropY+20, dropW, dropH);
@@ -160,10 +199,24 @@ if (dropActive) {
   dropY += dropSpeed;
   if (dropY > height+dropH) {
     dropActive = false;
+    waterlevel +=4;
     }
   }
+if (millis() - starttime < 5000){
+  fill(255)
+  noStroke()
+  textSize(15)
+  text("Click Anywhere for Rain",300,100)
 }
 
+push()
+noStroke()
+fill(18,47,104)
+rect(0,600-waterlevel,600,waterlevel)
+pop()
+}
+
+// The layout for the snow
 function Snow() {
 background(192,246,251)
 strokeWeight(0)
@@ -203,19 +256,39 @@ circle(50,230,5)
 circle(50,240,5)
 circle(50,250,5)
 pop()
+if (millis() - starttime < 5000){
+  fill(0)
+  textSize(15)
+  text("Click to let it snow",300, 150)
+}
 if (snowActive) {
-  SnowFlake(dropX,dropY)
-  SnowFlake
-  dropY += dropSpeed
+  SnowFlake(dropX,dropY);
+  dropY += dropSpeed;
+  if (dropY>250 && dropY <480) {
+    iceshine = true
+    shinetimer = millis()
+    shineX = dropX;
+    shineY = dropY;
+  }
   if (dropY > height) {
     snowActive = false
+  }
+}
+if (iceshine){
+  noStroke();
+  fill(173, 216, 230,120);
+  circle(shineX,shineY,70)
+  fill(255,255,255,180);
+  circle(shineX,shineY,35)
+  if(millis() - shinetimer > 400) {
+    iceshine = false
   }
 }
 
 
 }
 
-
+// The shape of the lines used to create the bird
 function SimpleBird(x,y,wingspan) {
   stroke(0);
   strokeWeight(2);
@@ -224,6 +297,7 @@ function SimpleBird(x,y,wingspan) {
   line(x,y,x+wingspan,y-wingspan * 0.4);
 }
 
+// The shape of the lines used to create the waves
 function Waves(x,y,wavelength) {
   stroke(0);
   strokeWeight(2);
@@ -232,6 +306,7 @@ function Waves(x,y,wavelength) {
   line(x,y,x+wavelength,y+wavelength*0.8);
 }
 
+// The shape of the Raindrop used to make the rain
 function RainDrop(x,y,w,h)
  {
   fill("lightblue");
@@ -240,6 +315,7 @@ function RainDrop(x,y,w,h)
   ellipse(x,y,w,h);
 }
 
+// The shape of the Snowflake used to make the snowflake
 function SnowFlake(x,y) {
   fill("white");
   stroke(0);
@@ -251,12 +327,19 @@ function SnowFlake(x,y) {
   line(x-20,y,x+20,y);
 }
 
+// Allows for all the buttions that change scenes restore it to inital opening
 function resetScene() {
   SunAlt = false;
   chest = false;
   dropActive = false;
   snowActive = false;
+  waterlevel = 0;
+  iceshine = false;
 }
+
+// Allows me for clicks for the sun and treasure chests
+// As well as to be able to make the rain and snow activate when pressed 
+
 
 function mousePressed() {
 
@@ -265,13 +348,13 @@ function mousePressed() {
     SunAlt = !SunAlt;
   }
 
-  if (Seasons == 1 &&mouseX<550&&mouseX>500&&mouseY<500&&mouseY>400) {
+  if (Seasons == 1 &&mouseX<550&&mouseX>450&&mouseY<500&&mouseY>400) {
     chest = !chest;
   }
 
   if (Seasons == 2) {
-    dropX = mouseX;
-    dropY = mouseY;
+    dropX = mouseX+20;
+    dropY = 80;
     dropW = random(5, 10);
     dropH = random(10, 20);
     dropSpeed = random(4, 10);
@@ -283,21 +366,27 @@ function mousePressed() {
     dropY = mouseY;
     dropSpeed = random(4, 10);
     snowActive = true;
+    shineX = 0;
+    shineY = 0;
   }
 }
 
+// Allows for the exact key pressed to switch to whatever function is asked
 function keyPressed() {
   if (key === '1') {
-    resetScene()
+    starttime = millis();
+    resetScene();
     Seasons = 1;
   } else if (key === '2') {
-    resetScene()
+    starttime = millis();
+    resetScene();
     Seasons = 2;
   } else if (key === '3') {
-    resetScene()
+    starttime = millis()
+    resetScene();
     Seasons = 3;
   } else if (key === '0') {
-    resetScene()
+    resetScene();
     Seasons = 0;
   }
 }
